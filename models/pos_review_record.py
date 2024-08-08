@@ -18,4 +18,5 @@ class PosReviewRecord(models.Model):
 	review_content = fields.Text(string="Review")
 	customer = fields.Many2one('res.partner',string="Customer")
 	salesperson = fields.Many2one('res.users', string="Sales Person")
-	screen_session_id = fields.Many2one('pos.screen.session', string='Session', domain="[('state', '=', 'opened')]", states={'draft': [('readonly', False)]}, readonly=True)
+	screen_session_id = fields.Many2one('pos.screen.session', string='Session', domain="[('state', '=', 'opened')]", readonly=True)
+	# screen_session_id = fields.Many2one('pos.screen.session', string='Session', domain="[('state', '=', 'opened')]", readonly="state != 'draft'")

@@ -21,7 +21,7 @@ class PosSession(models.Model):
         return {'search_params': {'domain': [], 'fields': fields}}
 
     def _get_pos_ui_pos_screen_config(self, params):
-        return self.env['pos.screen.config'].search_read(**params['search_params'])
+        return self.env['pos.screen.config'].sudo().search_read(**params['search_params'])
 
     def _loader_params_pos_order_line(self):
         return {'search_params': {'domain': [], 'fields': ['product_id', 'order_id', 'qty', 'state']}}
@@ -42,7 +42,7 @@ class PosSession(models.Model):
 
     def _loader_params_pos_order_line(self):
         fields = ['product_id', 'order_id', 'qty', 'state']
-        pos_screen_data = self.env['pos.screen.config'].search([])
+        pos_screen_data = self.env['pos.screen.config'].sudo().search([])
         validation_date = datetime.date.today()
         if (pos_screen_data):
             pos_categ_ids = []

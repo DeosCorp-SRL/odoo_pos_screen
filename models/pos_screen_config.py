@@ -57,11 +57,11 @@ class PosScreenConfig(models.Model):
     blank_gif = fields.Binary(string="Blank Gif",compute="compute_base64")
 
     # session related fields
-    current_session_id = fields.Many2one('pos.screen.session', compute='_compute_current_session', string="Current Session", store=True)
+    current_session_id = fields.Many2one('pos.screen.session', compute='_compute_current_session', string="Current Session", store=True, compute_sudo=True)
     session_ids = fields.One2many('pos.screen.session', 'screen_id', string='Sessions')
-    has_active_session = fields.Boolean(compute='_compute_current_session')
-    current_session_state = fields.Char(compute='_compute_current_session')
-    number_of_opened_session = fields.Integer(string="Number of Opened Session", compute='_compute_current_session')
+    has_active_session = fields.Boolean(compute='_compute_current_session', compute_sudo=True, store=True)
+    current_session_state = fields.Char(compute='_compute_current_session', store=True, compute_sudo=True)
+    number_of_opened_session = fields.Integer(string="Number of Opened Session", compute='_compute_current_session', compute_sudo=True, store=True)
     current_user_id = fields.Many2one('res.users', string='Current Session Responsible', compute='_compute_current_session_user')
     pending_order_count = fields.Integer(compute='_compute_order_count')
     proceed_order_count = fields.Integer(compute='_compute_order_count')
@@ -292,9 +292,9 @@ class PosScreenConfig(models.Model):
 class PosConfig(models.Model):
     _inherit = 'pos.config'
 
-    pos_kitchen_screen = fields.Many2many('pos.screen.config', string="Pos Kitchen Screen")
+    pos_kitchen_screen = fields.Many2many('pos.screen.config', string="Pos Kitchen Screen",compute_sudo=True)
     auto_accept = fields.Boolean('Auto Accept kitchen order', default=False)
-    pos_review_screen = fields.One2many('pos.screen.config','related_id', string="Pos Review Screen")
+    pos_review_screen = fields.One2many('pos.screen.config','related_id', string="Pos Review Screen",compute_sudo=True)
     order_action = fields.Selection([('validation','On Order Validation'),('order_button','Clicking On Order Button')],default="order_button")
     is_done_orderline_restricted = fields.Boolean(default=False) 
     is_done_order_restricted = fields.Boolean(default=False)

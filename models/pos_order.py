@@ -31,7 +31,7 @@ class PosOrder(models.Model):
     cancellation_reason = fields.Char(string="Cancellation Reason",readonly=True)
     is_state_updated = fields.Boolean(string="Is state Updated")
     out_of_stock_products = fields.One2many('product.product', 'related_order', string="Out Of Stock Products")
-    kitchen_screen_id = fields.Many2one('pos.screen.config', string="Pos Kitchen Screen",readonly=True)
+    kitchen_screen_id = fields.Many2one('pos.screen.config', string="Pos Kitchen Screen",readonly=True,compute_sudo=True)
     order_type = fields.Selection([('takeaway', 'Takeaway'), ('dining', 'Dining')], string="Order Type",readonly=True)
     review_record_id = fields.Many2one('pos.review.record',string="PoS Order Review")
     is_kitchen_order = fields.Boolean(string="Is Kitchen Order")
@@ -42,7 +42,7 @@ class PosOrder(models.Model):
     def create(self, vals_list):
         res = super(PosOrder, self).create(vals_list)
         data = self.search_read([('id', '=', res.id)])
-        screen = self.env['pos.screen.config'].search([('related_id', '=', res.config_id.id)])
+        screen = self.env['pos.screen.config'].sudo().search([('related_id', '=', res.config_id.id)])
         if(screen): self.env['pos.session']._notify_changes_in_kitchen(data, True, 'pos.order')
         return res
 
@@ -75,7 +75,7 @@ class PosOrder(models.Model):
         order_fields = super(PosOrder, self)._order_fields(ui_order)
         session = self.env['pos.session'].sudo().browse(ui_order.get('pos_session_id'))
         if(hasattr(session.config_id, 'order_action') and session.config_id.order_action != 'order_button') or not hasattr(session.config_id, 'order_action'):
-            pos_screen_data = self.env['pos.screen.config'].search([("pos_config_ids", 'in', session.config_id.id)])
+            pos_screen_data = self.env['pos.screen.config'].sudo().search([("pos_config_ids", 'in', session.config_id.id)])
             for data in pos_screen_data.ids:
                 order_fields.update({
                     'kitchen_order_name': ui_order.get('token_no'),

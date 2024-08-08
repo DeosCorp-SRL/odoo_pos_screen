@@ -20,7 +20,7 @@ class PosScreenSession(models.Model):
         ('closing_control', 'Closing Control'),  # method action_pos_session_close
         ('closed', 'Closed & Posted'),
     ]
-    screen_id = fields.Many2one('pos.screen.config', string="Screen", readonly=True)
+    screen_id = fields.Many2one('pos.screen.config', string="Screen", readonly=True,compute_sudo=True)
     name = fields.Char(string='Session ID', required=True, readonly=True, default='/')
     user_id = fields.Many2one('res.users', string='Opened By', required=True, index=True, readonly=True, default=lambda self: self.env.uid, ondelete='restrict')
     start_at = fields.Datetime(string='Opening Date', readonly=True)

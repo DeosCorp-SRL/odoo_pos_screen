@@ -183,6 +183,7 @@
         </span>
     </t>
 
+<!-- aca viene la vista del cart screen -->
     <t t-name="CustomerCartScreen">
 		<div class="container-fluid" style="height:100%;max-height:100%;">
 			<div class="row cart-title">
@@ -244,12 +245,12 @@
 					<t t-if="orderlines_details and orderlines_details.order">
 						<t t-if="!orderlines_details.order.is_paid()">
 							<div class="row" style="background: #333333;box-shadow: 0 2px 8px 0 rgba(0,0,0,0.11);font-size: 20px;color: #FFFFFF;text-align: center;">
-								<span style="padding:0.5em;font-family: Montserrat;font-weight:bold;">Total Cart Amount</span>
+								<span style="padding:0.5em;font-family: Montserrat;font-weight:bold;">Monto Total</span>
 							</div>
 							<div style="padding:2em 1em 1em 2em;color:#555555 100%;font-size: 16px;font-family: Montserrat;color: #555555;text-align: right;">
 								<div  class="inner-box" >
 									<div class="d-inline-block" style="width:100%;background: #FFFFFF;font-weight:bold;padding:0 5%;margin-top:5%;">
-										<div class="float-left">Total Item In Cart</div><div  class="float-right" t-esc="orderlines_details.items_count"></div>
+										<div class="float-left">Productos Totales a Comprar</div><div  class="float-right" t-esc="orderlines_details.items_count"></div>
 									</div>
 									<div style="margin-top:1em;font-weight:600">
 										<div class="d-inline-block" style="width:100%;padding: 0 0 0 14%;">

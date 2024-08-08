@@ -606,6 +606,7 @@
 					<field name="pos_reference"/>
 					<field name="kitchen_order_name"/>
 					<field name="screen_session_id" widget="badge"/>
+					<!-- <field name="screen_session_id" widget="badge" attrs="{'readonly': [('state', '!=', 'draft')]}"/> -->
 					<field name="date_order"/>
 					<field name="partner_id"/>
 					<field name="order_progress" widget="badge" 

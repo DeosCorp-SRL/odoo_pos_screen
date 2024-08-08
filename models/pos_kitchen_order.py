@@ -40,8 +40,10 @@ class PosKitchenOrder(models.Model):
     order_type = fields.Selection([('takeaway', 'Takeaway'), ('dining', 'Dining')], string="Order Type",readonly=True)
     floor_id = fields.Many2one("restaurant.floor",string="Floor",readonly=True)
     table_id = fields.Many2one("restaurant.table",string="Table No",readonly=True)
-    screen_session_id = fields.Many2one('pos.screen.session', string='Session', required=True, domain="[('state', '=', 'opened')]", states={'draft': [('readonly', False)]}, readonly=True)
+    # screen_session_id = fields.Many2one('pos.screen.session', string='Session', required=True, domain="[('state', '=', 'opened')]")
+    screen_session_id = fields.Many2one('pos.screen.session', string='Session', required=True, domain="[('state', '=', 'opened')]", readonly=True)
     
+
     def done_screen_pending_order(self, session_id):
         records = self.search([('screen_session_id', '=', session_id), ('order_progress', 'not in', ['done', 'cancel', 'picked_up'])])
         if(records):
@@ -52,6 +54,13 @@ class PosKitchenOrder(models.Model):
                 })
         session = self.env['pos.screen.session'].browse(session_id)
         session.action_pos_screen_session_closing_control()
+
+    @api.onchange('state')
+    def _onchange_state(self):
+        for record in self:
+            if record.state != 'draft':
+                record.screen_session_id = False
+
 
     @api.model
     def done_pos_pending_order(self, session_id):
@@ -373,7 +382,7 @@ class PosKitchenOrder(models.Model):
         process_line = partial(self._kitchen_order_line_fields, session_id=data['pos_session_id'])
         pos_config_id = self.env['pos.session'].browse(data['pos_session_id']).config_id
         pos_config_id_val = pos_config_id.id if pos_config_id.id else None
-        pos_screen_data = self.env['pos.screen.config'].search([("pos_config_ids",'=ilike', pos_config_id.id)])
+        pos_screen_data = self.env['pos.screen.config'].sudo().search([("pos_config_ids",'=ilike', pos_config_id.id)])
         floor_id = False
 
         if data.get('table_id'):
@@ -406,7 +415,7 @@ class PosKitchenOrder(models.Model):
             order_line_list = [] 
 
             for i in orderline_data:
-                pos_screen_config = self.env['pos.screen.config'].search([('id', '=', i)])
+                pos_screen_config = self.env['pos.screen.config'].sudo().search([('id', '=', i)])
                 order = None
                 res = {
                     'user_id':      data.get('user_id') or False,
@@ -510,7 +519,7 @@ class PosKitchenOrder(models.Model):
                 order_line_list = [] 
                 
                 for order in orders:
-                    kitchen_screen_config = self.env['pos.screen.config'].search([('current_session_id', '=', order.screen_session_id.id)])
+                    kitchen_screen_config = self.env['pos.screen.config'].sudo().search([('current_session_id', '=', order.screen_session_id.id)])
                     if kitchen_screen_config: kitchen_screen_config.write({'is_changed':True})
                     
                     if changes:
